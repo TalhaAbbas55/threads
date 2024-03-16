@@ -10,7 +10,7 @@ const page = async () => {
 
   const userInfo = await fetchUser(userData.id);
 
-  // get activity
+  // get activity from user
 
   const activity = await getActivity(userInfo._id);
 
