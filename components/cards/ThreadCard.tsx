@@ -5,6 +5,7 @@ import HeartGray from "../../public/assets/heart-gray.svg";
 import Reply from "../../public/assets/reply.svg";
 import Repost from "../../public/assets/repost.svg";
 import Share from "../../public/assets/share.svg";
+import { formatDateString } from "@/lib/utils";
 
 interface Props {
   id: string;
@@ -40,6 +41,7 @@ function ThreadCard({
   comments,
   isComment,
 }: Props) {
+  console.log(community, "community");
   return (
     <article
       className={`flex w-full flex-col rounded-xl  ${
@@ -110,6 +112,25 @@ function ThreadCard({
             </div>
           </div>
         </div>
+        {/* TODO: delete a thread */}
+        {/* TODO: Show comment logo */}
+        {!isComment && community && (
+          <Link
+            href={`/communities/${community.id}`}
+            className="mt-5 flex items-center"
+          >
+            <p className="text-settle-medium text-gray-1">
+              {formatDateString(createdAt)} - {community.name} Community{" "}
+            </p>
+            <Image
+              src={community.image}
+              alt={community.name}
+              width={14}
+              height={14}
+              className="ml-1 rounded-full object-cover cursor-pointer"
+            />
+          </Link>
+        )}
       </div>
     </article>
   );

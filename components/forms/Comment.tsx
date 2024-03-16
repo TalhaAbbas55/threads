@@ -39,7 +39,6 @@ function Comment({ threadId, currentUserImage, currentUserId }: Props) {
     },
   });
   const onSubmit = async (values: z.infer<typeof CommentValidation>) => {
-    console.log(values, "a ads fsjk");
     const response = await addCommentToThread(
       threadId,
       values.thread,
@@ -48,8 +47,6 @@ function Comment({ threadId, currentUserImage, currentUserId }: Props) {
     );
 
     form.reset();
-
-    console.log(form.getValues());
   };
   return (
     <Form {...form}>

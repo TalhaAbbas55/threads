@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { useOrganization } from "@clerk/nextjs";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
 
@@ -35,6 +35,8 @@ interface Props {
 }
 
 function PostThread({ userId }: { userId: string }) {
+  const organization = useOrganization();
+  console.log(organization, "organization");
   const router = useRouter();
   const pathname = usePathname();
   const [userData, setUserData] = useState<any>(null);
@@ -62,7 +64,7 @@ function PostThread({ userId }: { userId: string }) {
     const response = await createThread({
       text: values.thread,
       author: userData._id,
-      communityId: null,
+      communityId: organization ? organization.organization?.id || "" : null,
       path: pathname,
     });
 
