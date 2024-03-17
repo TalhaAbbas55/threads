@@ -1,27 +1,27 @@
-import UserCard from "@/components/cards/UserCard";
-import ProfileHeader from "@/components/shared/ProfileHeader";
-import ThreadsTab from "@/components/shared/ThreadsTab";
-
-import { profileTabs } from "@/constants";
-import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
-import { currentUser } from "@clerk/nextjs";
-import Image from "next/image";
 import { redirect } from "next/navigation";
-import React from "react";
+import { currentUser } from "@clerk/nextjs";
 
-const page = async () => {
-  const userData = await currentUser();
-  if (!userData) redirect("/login");
+import UserCard from "@/components/cards/UserCard";
+import Searchbar from "@/components/shared/Searchbar";
+import Pagination from "@/components/shared/Pagination";
 
-  const userInfo = await fetchUser(userData.id);
+import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
 
+async function Page({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
+  const user = await currentUser();
+  if (!user) return null;
+
+  const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  // fetch users
   const result = await fetchUsers({
-    userId: userInfo.id,
-    searchString: "",
-    pageNumber: 1,
+    userId: user.id,
+    searchString: searchParams.q,
+    pageNumber: searchParams?.page ? +searchParams.page : 1,
     pageSize: 25,
   });
 
@@ -29,28 +29,34 @@ const page = async () => {
     <section>
       <h1 className="head-text mb-10">Search</h1>
 
-      {/* Searhc Bar */}
+      <Searchbar routeType="search" />
 
       <div className="mt-14 flex flex-col gap-9">
         {result.users.length === 0 ? (
-          <p className="no-result">No Users Found</p>
+          <p className="no-result">No Result</p>
         ) : (
           <>
-            {result.users.map((user) => (
+            {result.users.map((person) => (
               <UserCard
-                key={user.id}
-                id={user.id}
-                name={user.name}
-                username={user.username}
-                imgUrl={user.image}
+                key={person.id}
+                id={person.id}
+                name={person.name}
+                username={person.username}
+                imgUrl={person.image}
                 personType="User"
               />
             ))}
           </>
         )}
       </div>
+
+      <Pagination
+        path="search"
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={result.isNext}
+      />
     </section>
   );
-};
+}
 
-export default page;
+export default Page;

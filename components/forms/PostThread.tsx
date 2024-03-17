@@ -21,7 +21,7 @@ import { Textarea } from "../ui/textarea";
 import { usePathname, useRouter } from "next/navigation";
 import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
-import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUser, fetchUserSingle } from "@/lib/actions/user.actions";
 interface Props {
   user: {
     id: string;
@@ -36,7 +36,7 @@ interface Props {
 
 function PostThread({ userId }: { userId: string }) {
   const organization = useOrganization();
-  console.log(organization, "organization");
+
   const router = useRouter();
   const pathname = usePathname();
   const [userData, setUserData] = useState<any>(null);
@@ -50,7 +50,7 @@ function PostThread({ userId }: { userId: string }) {
 
   useEffect(() => {
     // Fetch user data
-    fetchUser(userId)
+    fetchUserSingle(userId)
       .then((user) => {
         setUserData(user);
       })
@@ -69,7 +69,6 @@ function PostThread({ userId }: { userId: string }) {
     });
 
     router.push("/");
-    console.log(form.getValues());
   };
   return (
     <Form {...form}>

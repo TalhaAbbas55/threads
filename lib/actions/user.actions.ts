@@ -9,6 +9,21 @@ import User from "../models/user.models";
 
 import { connectToDatabase } from "./mongoose";
 
+export async function fetchUserSingle (userId:string) {
+  try {
+    connectToDatabase();
+
+    return await User.findOne({id: userId});
+    // .populate({
+    //   path:'communities',
+    //   model: 'Community',
+    // })
+  } catch (error) {
+    throw new Error("Error while fetching user" + error);
+  }
+}
+
+
 export async function fetchUser(userId: string) {
   try {
     connectToDatabase();
