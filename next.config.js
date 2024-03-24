@@ -24,6 +24,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
+      {
+        protocol: "https",
+        hostname: "edamam-product-images.s3.amazonaws.com",
+      },
     ],
   },
   typescript: {
