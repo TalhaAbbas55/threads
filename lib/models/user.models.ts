@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     onboarded: {type: Boolean, default: false},
     threads: [{type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
     communities: [{type: mongoose.Schema.Types.ObjectId, ref: 'Community'}],
+    favorites: [String]
 });
 
 const User = mongoose.models.User ||  mongoose.model('User', userSchema); // this means if the model is already created, use it, else create a new one

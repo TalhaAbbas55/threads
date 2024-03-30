@@ -34,6 +34,11 @@ export const sidebarLinks = [
     route: "/search",
     label: "Search",
   },
+  {
+    imgURL: "/assets/search.svg",
+    route: "/favorites",
+    label: "Favorites",
+  },
 ];
 
 export const profileTabs = [

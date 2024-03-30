@@ -196,3 +196,29 @@ export async function getActivity(userId: string) {
     throw error;
   }
 }
+
+export async function toggleFromFavorites(userId: string, uri: string) {
+  try {
+    // Find the user document based on the user ID
+    let user = await User.findOne({ id: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Update the favorites array based on the presence or absence of the URI
+    const operation = user.favorites.includes(uri) ? '$pull' : '$push';
+
+    // Update the favorites array using $pull or $push
+    await User.updateOne({ id: userId }, { [operation]: { favorites: uri } });
+
+    // Fetch the updated user document
+    user = await User.findOne({ id: userId }); // Convert to plain JavaScript object
+
+    // Return the updated user document
+    return user;
+  } catch (error) {
+    console.error("Error toggling favorites:", error);
+    throw new Error("Unable to toggle favorites");
+  }
+}

@@ -19,6 +19,9 @@ export interface SingleRecipe {
   totalNutrients?: string[];
   totalDaily?: string[];
   digest?: string[];
+  sourceWebsiteUrl?: string;
+  userId?: string;
+  isFavorite?: boolean;
 }
 
 export interface Recipe {

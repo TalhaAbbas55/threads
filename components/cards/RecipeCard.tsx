@@ -8,6 +8,8 @@ import AddtoFavorites from "@/public/assets/favorites-star-svgrepo-com";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setRecipeData } from "@/lib/redux/DataSlice";
+import { toggleFromFavorites } from "@/lib/actions/user.actions";
+import { useState } from "react";
 
 function RecipeCard({
   uri,
@@ -30,10 +32,14 @@ function RecipeCard({
   totalNutrients,
   totalDaily,
   digest,
+  userId,
+  isFavorite,
 }: SingleRecipe) {
   const urlObject = new URL(url || "");
   const router = useRouter();
   const dispatch = useDispatch();
+  const [favorite, setfavorite] = useState(isFavorite);
+
   const navigateRoute = () => {
     dispatch(
       setRecipeData({
@@ -57,9 +63,16 @@ function RecipeCard({
         totalNutrients,
         totalDaily,
         digest,
+        sourceWebsiteUrl: `${urlObject.protocol}${urlObject.hostname}`,
+        userId,
+        isFavorite: favorite,
       })
     );
     router.push(`/search/SingleRecipe/${label}`);
+  };
+  const handleAddToFavorites = async () => {
+    const response = userId && (await toggleFromFavorites(userId, uri || ""));
+    setfavorite(!favorite);
   };
   return (
     <article className="community-card w-full">
@@ -78,7 +91,9 @@ function RecipeCard({
               className="rounded-full object-cover"
             />
           </Link>
-          <AddtoFavorites fill="#fff" />
+          <div className="cursor-pointer" onClick={handleAddToFavorites}>
+            <AddtoFavorites fill={favorite ? "yellow" : "#fff"} />
+          </div>
         </div>
 
         <div>

@@ -3,6 +3,14 @@ import Link from "next/link";
 
 import { formatDateString } from "@/lib/utils";
 import DeleteThread from "./DeleteThread";
+import LikeThread from "../shared/LikeThread";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import ShareThread from "../shared/ShareThread";
 
 interface Props {
   id: string;
@@ -26,9 +34,11 @@ interface Props {
     };
   }[];
   isComment?: boolean;
+  likes?: string[];
+  userDbId: string;
 }
 
-function ThreadCard({
+async function ThreadCard({
   id,
   currentUserId,
   parentId,
@@ -38,6 +48,8 @@ function ThreadCard({
   createdAt,
   comments,
   isComment,
+  likes,
+  userDbId,
 }: Props) {
   return (
     <article
@@ -71,36 +83,75 @@ function ThreadCard({
 
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
-                <Image
-                  src="/assets/heart-gray.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
-                <Link href={`/thread/${id}`}>
-                  <Image
-                    src="/assets/reply.svg"
-                    alt="heart"
-                    width={24}
-                    height={24}
-                    className="cursor-pointer object-contain"
-                  />
-                </Link>
-                <Image
-                  src="/assets/repost.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
-                <Image
-                  src="/assets/share.svg"
-                  alt="heart"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <LikeThread
+                        currentUserId={userDbId}
+                        threadId={id}
+                        parentId={parentId}
+                        authorName={author.name}
+                        authorImage={author.image}
+                        likes={likes || []}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Like</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Link href={`/thread/${id}`}>
+                        <Image
+                          src="/assets/reply.svg"
+                          alt="heart"
+                          width={24}
+                          height={24}
+                          className="cursor-pointer object-contain"
+                        />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Reply</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                {author.id !== currentUserId && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Link
+                          href={`/create-thread?repost=true&content=${content}&author=${author.name}&community=${community?.name}`}
+                        >
+                          <Image
+                            src="/assets/repost.svg"
+                            alt="heart"
+                            width={24}
+                            height={24}
+                            className="cursor-pointer object-contain"
+                          />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Repost</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <ShareThread threadUrl={`/thread/${id}`} />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Share</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               {isComment && comments.length > 0 && (

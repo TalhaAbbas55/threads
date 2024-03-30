@@ -3,8 +3,16 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
-
-const page = async () => {
+interface Props {
+  searchParams: {
+    repost?: boolean;
+    content: string;
+    author: string;
+    community: string;
+  };
+}
+const page = async ({ searchParams }: Props) => {
+  const { repost, content, author, community } = searchParams;
   const userData = await currentUser();
   if (!userData) redirect("/login");
 
@@ -15,7 +23,13 @@ const page = async () => {
     <>
       <h1 className="head-text">Create Thread</h1>
 
-      <PostThread userId={userData.id} />
+      <PostThread
+        userId={userData.id}
+        repost={repost || false}
+        content={content}
+        community={community}
+        author={author}
+      />
     </>
   );
 };

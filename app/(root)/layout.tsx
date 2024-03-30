@@ -10,6 +10,7 @@ import {
 } from "@/components/shared";
 import { store } from "@/lib/redux/store";
 import { Providers } from "@/lib/redux/Providers";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,6 +37,7 @@ export default function RootLayout({
               </section>
               <RightSidebar />
             </main>
+            <Toaster />
 
             <Bottombar />
           </body>

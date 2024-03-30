@@ -243,3 +243,46 @@ export async function addCommentToThread(
     throw new Error("Unable to add comment");
   }
 }
+
+
+
+export async function likeThread(threadId: string, userId: string) {
+  try {
+    connectToDatabase();
+
+    // Check if the user has already liked the thread
+    const thread = await Thread.findById(threadId);
+
+    if (!thread) {
+      throw new Error("Thread not found");
+    }
+
+    if(!thread.likes) {
+      thread.likes = [];
+    }
+
+    let numberOfLikes;
+
+    if (thread.likes.includes(userId)) {
+      // If the user has already liked the thread, remove their like
+      await Thread.findByIdAndUpdate(threadId, {
+        $pull: { likes: userId },
+      });
+
+      numberOfLikes = thread.likes.length - 1;
+    } else {
+      // If the user hasn't liked the thread yet, add their like
+      await Thread.findByIdAndUpdate(threadId, {
+        $push: { likes: userId },
+      });
+
+      numberOfLikes = thread.likes.length + 1;
+    }
+
+    // Return the number of likes
+    return numberOfLikes;
+  } catch (error) {
+    console.error("Error while liking/unliking thread:", error);
+    throw new Error("Unable to like/unlike thread");
+  }
+}

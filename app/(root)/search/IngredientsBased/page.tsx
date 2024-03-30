@@ -32,7 +32,6 @@ async function Page({ searchParams }: { searchParams: SearchParams }) {
       parseInt(searchParams.end || "")
     );
   }
-  console.log(searchParams, "pa");
 
   return (
     <section>
@@ -50,6 +49,8 @@ async function Page({ searchParams }: { searchParams: SearchParams }) {
         </p>
         {response?.data.hits.map((dish: Recipe, index: number) => (
           <RecipeCard
+            userId={user.id}
+            isFavorite={userInfo?.favorites.includes(dish.recipe.uri) || false}
             key={index}
             uri={dish.recipe.uri}
             label={dish.recipe.label}

@@ -51,6 +51,7 @@ async function Page({ searchParams }: { searchParams: SearchParams }) {
         </p>
         {response?.data.hits.map((dish: Recipe, index: number) => (
           <RecipeCard
+            userId={user.id}
             key={index}
             uri={dish.recipe.uri}
             label={dish.recipe.label}

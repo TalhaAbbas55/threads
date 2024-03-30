@@ -1,4 +1,4 @@
-import { fetchUserPosts } from "@/lib/actions/user.actions";
+import { fetchUser, fetchUserPosts } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 import React from "react";
 import ThreadCard from "../cards/ThreadCard";
@@ -16,13 +16,15 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
   } else {
     result = await fetchCommunityPosts(accountId);
   }
-  console.log(result, "resudl");
+  const userInfo = currentUserId ? await fetchUser(currentUserId) : { _id: "" };
 
   if (!result) redirect("/");
   return (
     <section className="mt-9 flex flex-col gap-10">
       {result.threads.map((thread: any) => (
         <ThreadCard
+          likes={thread.likes}
+          userDbId={userInfo._id}
           key={thread._id}
           id={thread._id}
           currentUserId={currentUserId}

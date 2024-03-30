@@ -22,19 +22,21 @@ import { usePathname, useRouter } from "next/navigation";
 import { ThreadValidation } from "@/lib/validations/thread";
 import { createThread } from "@/lib/actions/thread.actions";
 import { fetchUser, fetchUserSingle } from "@/lib/actions/user.actions";
-interface Props {
-  user: {
-    id: string;
-    objectId: string;
-    username: string;
-    name: string;
-    bio: string;
-    image: string;
-  };
-  btnTitle: string;
-}
+import Community from "@/lib/models/community.model";
 
-function PostThread({ userId }: { userId: string }) {
+function PostThread({
+  userId,
+  repost,
+  content,
+  author,
+  community,
+}: {
+  userId: string;
+  repost: boolean;
+  content: string;
+  author: string;
+  community: string;
+}) {
   const organization = useOrganization();
 
   const router = useRouter();
@@ -43,7 +45,7 @@ function PostThread({ userId }: { userId: string }) {
   const form = useForm({
     resolver: zodResolver(ThreadValidation),
     defaultValues: {
-      thread: "",
+      thread: repost ? content : "",
       accountId: userId,
     },
   });
@@ -62,7 +64,15 @@ function PostThread({ userId }: { userId: string }) {
 
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     const response = await createThread({
-      text: values.thread,
+      text: repost
+        ? `${values.thread}
+      
+      
+      ---(original post by ${author} in ${
+            community ? +community + "Community" : ""
+          })     
+      `
+        : values.thread,
       author: userData._id,
       communityId: organization ? organization.organization?.id || "" : null,
       path: pathname,
@@ -90,12 +100,25 @@ function PostThread({ userId }: { userId: string }) {
                   placeholder="Enter your post"
                   className="no-focus border border-dark-4 bg-dark-3 text-light-1"
                   {...field}
+                  value={field.value}
+                  defaultValue={repost ? content : ""}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {repost && (
+          <p className="text-light-1">
+            Original by {author}{" "}
+            {community && (
+              <span>
+                in <b>{community} Community</b>
+              </span>
+            )}
+          </p>
+        )}
 
         <Button type="submit" className="bg-primary-500">
           Post Thread
