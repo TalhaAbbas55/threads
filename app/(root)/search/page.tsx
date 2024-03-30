@@ -17,12 +17,6 @@ async function Page({
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const value = encodeURIComponent(
-    "http://www.edamam.com/ontologies/edamam.owl#recipe_c9ed14d96afe9571ed5fbba8b7c883a1"
-  );
-  const data = await getRecipeInfoByUri(`uri=${value}`);
-
-  console.log(data.data.hits);
   return (
     <section>
       <h1 className="head-text mb-10">Search</h1>
