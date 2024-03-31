@@ -29,6 +29,7 @@ export default async function Home() {
                 comments={post.children}
                 likes={post.likes}
                 userDbId={userInfo._id}
+                files={post.files}
               />
             ))}
           </>

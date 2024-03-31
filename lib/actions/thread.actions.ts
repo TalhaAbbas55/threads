@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import {v2 as cloudinary} from 'cloudinary';
+          
 
 import { connectToDatabase } from "./mongoose";
 
@@ -9,6 +11,11 @@ import User from "../models/user.models";
 import Thread from "../models/thread.models";
 import Community from "../models/community.model";
 
+cloudinary.config({ 
+  cloud_name: 'dbqzrohzv', 
+  api_key: '492535422724826', 
+  api_secret: 'oh7BWQoC2LXhJxLPqGSF0P4jag0' 
+});
 export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   connectToDatabase();
 
@@ -56,25 +63,50 @@ interface Params {
   path: string,
 }
 
-export async function createThread({ text, author, communityId, path }: Params
-) {
+export async function createThread({ text, author, communityId, path, files }: Params) {
   try {
-    
     connectToDatabase();
-    
 
     const communityIdObject = await Community.findOne(
       { id: communityId },
       { _id: 1 }
     );
 
-    
+    // Upload all images to Cloudinary and get their secure URLs
+    const uploadPromises = files.map((image) => {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload(
+          image.base64,
+          { public_id: image.name },
+          function (error, result) {
+            if (error) {
+              reject(`Failed to upload image: ${error.message}`);
+            } else {
+              resolve(result.secure_url);
+            }
+          }
+        );
+      });
+    });
 
+    // Wait for all images to be uploaded
+    const allImages = await Promise.all(uploadPromises);
+    console.log({
+      text,
+      author,
+      community: communityIdObject,
+      files: allImages,
+    },'here')
+
+    // Create thread with uploaded image URLs
     const createdThread = await Thread.create({
       text,
       author,
-      community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
+      community: communityIdObject,
+      files: allImages,
     });
+
+    console.log(createdThread, 'createdThread')
 
     // Update User model
     await User.findByIdAndUpdate(author, {
@@ -93,6 +125,7 @@ export async function createThread({ text, author, communityId, path }: Params
     throw new Error(`Failed to create thread: ${error.message}`);
   }
 }
+
 
 async function fetchAllChildThreads(threadId: string): Promise<any[]> {
   const childThreads = await Thread.find({ parentId: threadId });

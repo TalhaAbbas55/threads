@@ -9,6 +9,8 @@ const threadSchema = new mongoose.Schema({
     parentId:{type: String},
     children: [{type: mongoose.Schema.Types.ObjectId, ref: 'Thread'}],
     likes: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+    files: [{ type: String }] // Array of file paths
+
    
 });
 

@@ -11,7 +11,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ShareThread from "../shared/ShareThread";
-
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 interface Props {
   id: string;
   currentUserId: string;
@@ -36,6 +42,7 @@ interface Props {
   isComment?: boolean;
   likes?: string[];
   userDbId: string;
+  files?: string[];
 }
 
 async function ThreadCard({
@@ -50,7 +57,11 @@ async function ThreadCard({
   isComment,
   likes,
   userDbId,
+  files,
 }: Props) {
+  if (content === "new test with image") {
+    console.log(files, "files");
+  }
   return (
     <article
       className={`flex w-full flex-col rounded-xl ${
@@ -80,6 +91,42 @@ async function ThreadCard({
             </Link>
 
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
+
+            {files &&
+              files?.length > 0 &&
+              (files.length > 1 ? (
+                <div className="flex justify-center">
+                  <Carousel className="w-full max-w-xs align-middle">
+                    <CarouselContent>
+                      {files?.map((file, index) => (
+                        <CarouselItem key={index}>
+                          <Image
+                            className="rounded-md my-4 "
+                            key={index}
+                            src={file}
+                            alt={`Image ${index + 1}`}
+                            width={500}
+                            height={300}
+                          />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious type="button" />
+                    <CarouselNext type="button" />
+                  </Carousel>
+                </div>
+              ) : (
+                <div className="flex justify-center">
+                  <Image
+                    className="rounded-md my-4 "
+                    key={0}
+                    src={files[0]}
+                    alt={`Image ${0 + 1}`}
+                    width={500}
+                    height={300}
+                  />
+                </div>
+              ))}
 
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">

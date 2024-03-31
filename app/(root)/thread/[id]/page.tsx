@@ -32,6 +32,7 @@ const page = async ({ params }: { params: { id: string } }) => {
           comments={thread.children}
           userDbId={userInfo._id}
           likes={thread.likes}
+          files={thread.files}
         />
       </div>
 
@@ -58,6 +59,7 @@ const page = async ({ params }: { params: { id: string } }) => {
             isComment
             userDbId={userInfo._id}
             likes={childrenItem.likes}
+            files={childrenItem.files}
           />
         ))}
       </div>
