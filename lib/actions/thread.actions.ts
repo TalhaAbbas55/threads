@@ -11,11 +11,12 @@ import User from "../models/user.models";
 import Thread from "../models/thread.models";
 import Community from "../models/community.model";
 
-cloudinary.config({ 
-  cloud_name: 'dbqzrohzv', 
-  api_key: '492535422724826', 
-  api_secret: 'oh7BWQoC2LXhJxLPqGSF0P4jag0' 
-});
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   connectToDatabase();
 
