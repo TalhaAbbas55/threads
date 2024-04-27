@@ -8,7 +8,15 @@ import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/redux/store";
 import { useRouter } from "next/navigation";
-import { URL } from "url";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import { toggleFromFavorites } from "@/lib/actions/user.actions";
 
@@ -171,6 +179,14 @@ function SingleRecipeDetail() {
           {source}
         </a>
       </div>
+      <Dialog>
+        <DialogTrigger>
+          <h3 className="text-light-1">Instructions</h3>
+        </DialogTrigger>
+        <DialogContent>
+          <iframe src={url} className="w-full h-96" title="Instructions" />
+        </DialogContent>
+      </Dialog>
     </article>
   );
 }

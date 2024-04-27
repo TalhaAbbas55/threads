@@ -126,7 +126,6 @@ export const allIngredients = [
   { label: 'Tapioca', value: 'Tapioca' },
   { label: 'Greater yam', value: 'Greater yam' },
   { label: 'Purple yam', value: 'Purple yam' },
-  { label: 'Arracacia', value: 'Arracacia' },
   { label: 'Peppers', value: 'Peppers' },
   { label: 'Eggplant', value: 'Eggplant' },
   { label: 'String beans', value: 'String beans' },
