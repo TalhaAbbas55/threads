@@ -18,13 +18,15 @@ async function Page({
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   return (
-    <section>
+    <section className="h-full">
       <h1 className="head-text mb-10">Search</h1>
 
-      <div className="flex justify-between">
+      <div className="flex justify-between h-full gap-10 mb-5">
         <SearchMode label="Search by Ingredients" mode="IngredientsBased" />
         <SearchMode label="Search by Recipe Name" mode="RecipeName" />
       </div>
+
+      <h4 className="head-text text-center">Pick one from here</h4>
     </section>
   );
 }

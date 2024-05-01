@@ -9,12 +9,13 @@ interface Props {
 const SearchMode = ({ label, mode }: Props) => {
   const router = useRouter();
   return (
-    <Button
-      className="user-card_btn"
+    <button
+      className="user-card_btn w-36"
       onClick={() => router.push(`/search/${mode}`)}
+      style={{ width: "50%", height: "50%" }}
     >
       {label}
-    </Button>
+    </button>
   );
 };
 

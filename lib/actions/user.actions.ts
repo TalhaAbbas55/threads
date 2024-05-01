@@ -9,11 +9,11 @@ import User from "../models/user.models";
 
 import { connectToDatabase } from "./mongoose";
 
-export async function fetchUserSingle (userId:string) {
+export async function fetchUserSingle(userId: string) {
   try {
     connectToDatabase();
 
-    return await User.findOne({id: userId});
+    return await User.findOne({ id: userId });
     // .populate({
     //   path:'communities',
     //   model: 'Community',
@@ -22,7 +22,6 @@ export async function fetchUserSingle (userId:string) {
     throw new Error("Error while fetching user" + error);
   }
 }
-
 
 export async function fetchUser(userId: string) {
   try {
@@ -197,17 +196,19 @@ export async function getActivity(userId: string) {
   }
 }
 
-export async function toggleFromFavorites(userId: string, uri: string) {
+export async function toggleFromFavorites(userId: string, uri: number) {
+  connectToDatabase();
   try {
     // Find the user document based on the user ID
     let user = await User.findOne({ id: userId });
+    console.log(user, "ue", userId);
 
     if (!user) {
       throw new Error("User not found");
     }
 
     // Update the favorites array based on the presence or absence of the URI
-    const operation = user.favorites.includes(uri) ? '$pull' : '$push';
+    const operation = user.favorites.includes(uri) ? "$pull" : "$push";
 
     // Update the favorites array using $pull or $push
     await User.updateOne({ id: userId }, { [operation]: { favorites: uri } });

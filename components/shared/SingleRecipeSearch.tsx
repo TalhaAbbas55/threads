@@ -23,51 +23,18 @@ interface Ingredient {
 function SingleRecipeSearch({ routeType, placeholder, count }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const [pages, setPages] = useState<{
-    start: number;
-    end: number;
-  }>({
-    start: 1,
-    end: 10,
-  });
 
   // / query after 0.3s of no input
-  const handleSearch = (pagesParam: { start: number; end: number }) => {
+  const handleSearch = () => {
     const delayDebounceFn = setTimeout(() => {
       if (search.length > 0) {
-        router.push(
-          `/search/RecipeName?q=${encodeURIComponent(search)}&start=${
-            pagesParam.start
-          }&end=${pagesParam.end}`
-        );
+        router.push(`/search/RecipeName?q=${encodeURIComponent(search)}`);
       } else {
         router.push(`/search/RecipeName`);
       }
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  };
-
-  const handlePages = (type: string) => {
-    if (type === "+") {
-      setPages({
-        start: pages.start + 10,
-        end: pages.end + 10,
-      });
-      handleSearch({
-        start: pages.start + 10,
-        end: pages.end + 10,
-      });
-    } else {
-      setPages({
-        start: pages.start - 10,
-        end: pages.end - 10,
-      });
-      handleSearch({
-        start: pages.start - 10,
-        end: pages.end - 10,
-      });
-    }
   };
 
   return (
@@ -91,20 +58,10 @@ function SingleRecipeSearch({ routeType, placeholder, count }: Props) {
           size="sm"
           className="community-card_btn"
           onClick={() => {
-            handleSearch(pages);
+            handleSearch();
           }}
         >
           Search
-        </Button>
-      </div>
-
-      <div className="flex  items-center gap-10 justify-center">
-        <Button onClick={() => handlePages("-")} disabled={pages.start === 1}>
-          <p>Previous Page</p>
-        </Button>
-        <p className="text-light-1">{count}</p>
-        <Button onClick={() => handlePages("+")} disabled={pages.end >= count}>
-          <p>Next Page</p>
         </Button>
       </div>
     </>

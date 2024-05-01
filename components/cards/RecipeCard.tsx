@@ -10,141 +10,138 @@ import { useDispatch } from "react-redux";
 import { setRecipeData } from "@/lib/redux/DataSlice";
 import { toggleFromFavorites } from "@/lib/actions/user.actions";
 import { useState } from "react";
+import "./styles.css";
+import { capitalizeFirstLetterOfWords } from "@/lib/utils";
 
 function RecipeCard({
-  uri,
-  label,
-  image,
-  source,
-  url,
-  shareAs,
-  dietLabels,
-  healthLabels,
-  cautions,
-  ingredientLines,
-  ingredients,
-  calories,
-  totalWeight,
-  totalTime,
-  cuisineType,
-  mealType,
-  dishType,
-  totalNutrients,
-  totalDaily,
-  digest,
   userId,
   isFavorite,
-}: SingleRecipe) {
-  const urlObject = new URL(url || "");
+  dish,
+  name,
+}: // dish,
+SingleRecipe) {
+  console.log(dish, "dish");
+
   const router = useRouter();
   const dispatch = useDispatch();
   const [favorite, setfavorite] = useState(isFavorite);
 
   const navigateRoute = () => {
-    dispatch(
-      setRecipeData({
-        uri,
-        label,
-        image,
-        source,
-        url,
-        shareAs,
-        dietLabels,
-        healthLabels,
-        cautions,
-        ingredientLines,
-        ingredients,
-        calories,
-        totalWeight,
-        totalTime,
-        cuisineType,
-        mealType,
-        dishType,
-        totalNutrients,
-        totalDaily,
-        digest,
-        sourceWebsiteUrl: `${urlObject.protocol}${urlObject.hostname}`,
-        userId,
-        isFavorite: favorite,
-      })
-    );
-    router.push(`/search/SingleRecipe/${label}`);
+    router.push(`/search/SingleRecipe/${dish.id}`);
   };
   const handleAddToFavorites = async () => {
-    const response = userId && (await toggleFromFavorites(userId, uri || ""));
+    console.log(userId, "userId");
+    const response = userId && (await toggleFromFavorites(userId, dish.id));
+
+    console.log(response, "response");
     setfavorite(!favorite);
   };
   return (
     <article className="community-card w-full">
+      {!name && (
+        <>
+          <div
+            className="text-light-1 flex justify-end gradient-text"
+            style={{ fontSize: "24px" }}
+          >
+            {dish?.usedIngredientCount} ingredient
+            {dish?.usedIngredientCount > 1 ? "s" : ""} match
+          </div>
+          <div
+            className="text-light-1 flex justify-end gradient-text"
+            style={{ fontSize: "24px", marginBottom: "-35px" }}
+          >
+            {dish?.missedIngredientCount} other ingredient
+            {dish?.missedIngredientCount > 1 ? "s" : ""}
+          </div>
+        </>
+      )}
+
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex w-full justify-between items-center">
-          <Link
-            href={shareAs || "#"}
-            className="relative "
-            style={{ height: "100px", width: "100px" }}
-            target="_blank"
+          <Image
+            src={dish?.image || ""}
+            alt="community_logo"
+            // fill
+            className="rounded-full object-cover"
+            height={300}
+            width={300}
+          />
+          <div
+            className="flex  w-full mr-5"
+            style={{ justifyContent: "space-around" }}
           >
-            <Image
-              src={image || ""}
-              alt="community_logo"
-              fill
-              className="rounded-full object-cover"
-            />
-          </Link>
-          <div className="cursor-pointer" onClick={handleAddToFavorites}>
-            <AddtoFavorites fill={favorite ? "yellow" : "#fff"} />
+            <h4
+              className="text-base-semibold text-light-1 "
+              style={{ textAlign: "end", fontSize: "24px" }}
+            >
+              {dish.title}
+            </h4>
           </div>
         </div>
-
-        <div>
-          <Link href={shareAs || ""} target="_blank">
-            <h4 className="text-base-semibold text-light-1">{label}</h4>
-          </Link>
-        </div>
+      </div>
+      <div
+        className="cursor-pointer flex justify-end"
+        onClick={handleAddToFavorites}
+      >
+        <AddtoFavorites fill={favorite ? "yellow" : "#fff"} />
       </div>
 
-      <h2 className="text-sm text-light-2 mt-4">Ingredients</h2>
+      {!name && (
+        <>
+          <h1 className=" text-light-2 mt-4 head-text mb-5">
+            {" "}
+            All Ingredients
+          </h1>
+          <div className="grid-container">
+            {[...dish.usedIngredients, ...dish?.missedIngredients]?.map(
+              (ingredient, index) => (
+                <div
+                  className="grid-item flex "
+                  style={{ flexDirection: "column", alignItems: "center" }}
+                  key={index}
+                >
+                  <Image
+                    src={ingredient.image || ""}
+                    alt="community_logo"
+                    className="rounded-full object-cover mx-auto mb-4"
+                    height={100}
+                    width={100}
+                    style={{ maxHeight: "120px", maxWidth: "120px" }}
+                  />
+                  <h6
+                    className="text-base-semibold text-light-1"
+                    style={{ textAlign: "center", fontSize: "20px" }}
+                  >
+                    {capitalizeFirstLetterOfWords(ingredient.name)}
+                  </h6>
+                  <div className="flex mt-2 justify-center ">
+                    <p
+                      className="text-light-1 mr-2 "
+                      style={{ fontSize: "18px", alignItems: "center" }}
+                    >
+                      {ingredient?.amount && ingredient.amount.toFixed(1)}
+                    </p>
+                    <p className="text-light-1">{ingredient?.unitLong}</p>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        </>
+      )}
 
-      <ul
-        style={{ listStyleType: "circle", color: "white" }}
-        className="ml-4 mr-2 my-4"
+      <div
+        className="mt-5 flex "
+        style={{ justifyContent: name ? "center" : "end" }}
       >
-        {ingredientLines?.slice(0, 4).map((ingredient, index) => (
-          <li>
-            <p key={index} className="text-sm text-light-2">
-              {ingredient}
-            </p>
-          </li>
-        ))}
-        {ingredientLines?.length && ingredientLines?.length > 4 && (
-          <p className="text-light-3">and more...</p>
-        )}
-      </ul>
-
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <Button
           size="sm"
           className="community-card_btn"
           onClick={navigateRoute}
         >
-          View
+          View Details
         </Button>
-      </div>
-
-      <div className="flex justify-between items-center my-4">
-        <div className="flex gap-5">
-          <h1 className="text-light-1">Meal Type</h1>
-          <p className="text-light-3">{mealType}</p>
-        </div>
-        <div className="flex gap-5">
-          <Link
-            href={`${urlObject.protocol}${urlObject.hostname}` || ""}
-            target="_blank"
-          >
-            <h1 className="text-light-1">Source</h1>
-            <p className="text-light-3">{source}</p>
-          </Link>
-        </div>
       </div>
     </article>
   );

@@ -7,7 +7,8 @@ import { allIngredients } from "@/constants";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import page from "@/app/(root)/activity/page";
-
+import "./styles.css";
+import { Loader } from "lucide-react";
 interface Props {
   routeType: string;
   placeholder: string;
@@ -21,29 +22,22 @@ interface Ingredient {
 
 function RecipeSearch({ routeType, placeholder, count }: Props) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const [pages, setPages] = useState<{
-    start: number;
-    end: number;
-  }>({
-    start: 1,
-    end: 10,
-  });
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>(
     []
   );
 
   // / query after 0.3s of no input
-  const handleSearch = (pagesParam: { start: number; end: number }) => {
+  const handleSearch = (pagesParam: { setLoader?: boolean }) => {
+    pagesParam.setLoader && setLoading(true);
     const delayDebounceFn = setTimeout(() => {
       if (selectedIngredients.length > 0) {
         const allIngredients = selectedIngredients
           .map((ingredient) => ingredient.value)
           .join(",");
         router.push(
-          `/search/IngredientsBased?q=${encodeURIComponent(
-            allIngredients
-          )}&start=${pagesParam.start}&end=${pagesParam.end}`
+          `/search/IngredientsBased?q=${encodeURIComponent(allIngredients)}`
         );
       } else {
         router.push(`/search/IngredientsBased`);
@@ -52,66 +46,46 @@ function RecipeSearch({ routeType, placeholder, count }: Props) {
 
     return () => clearTimeout(delayDebounceFn);
   };
+  useEffect(() => {
+    if (count > 0 || count === -1) {
+      setLoading(false);
+    }
+  }, [count]);
   const handleIngredientChange = (newValue: Ingredient[]) => {
     setSelectedIngredients(newValue);
   };
 
-  const handlePages = (type: string) => {
-    if (type === "+") {
-      setPages({
-        start: pages.start + 10,
-        end: pages.end + 10,
-      });
-      handleSearch({
-        start: pages.start + 10,
-        end: pages.end + 10,
-      });
-    } else {
-      setPages({
-        start: pages.start - 10,
-        end: pages.end - 10,
-      });
-      handleSearch({
-        start: pages.start - 10,
-        end: pages.end - 10,
-      });
-    }
-  };
-
   return (
     <>
+      <div className="flex justify-between mr-2">
+        <h1 className="head-text mb-10">Search by Ingredients</h1>
+
+        {loading && <Loader size={40} className="animate-spin" color="white" />}
+      </div>
       <div className="searchbar">
-        <Image
+        {/* <Image
           src="/assets/search-gray.svg"
           alt="search"
           width={24}
           height={24}
           className="object-contain"
+        /> */}
+        <CreatableSelect
+          isClearable
+          options={allIngredients}
+          isMulti
+          value={selectedIngredients}
+          onChange={handleIngredientChange}
+          className="ingredient_search"
+          // inputValue={search}
         />
-      </div>
-      <CreatableSelect
-        isClearable
-        options={allIngredients}
-        isMulti
-        value={selectedIngredients}
-        onChange={handleIngredientChange}
-        // inputValue={search}
-      />
 
-      <Button
-        size="sm"
-        className="community-card_btn"
-        onClick={() => handleSearch(pages)}
-      >
-        Search
-      </Button>
-      <div className="flex  items-center gap-10 justify-center">
-        <Button onClick={() => handlePages("-")} disabled={pages.start === 1}>
-          <p>Previous Page</p>
-        </Button>
-        <p className="text-light-1">{count}</p>
-        <Button onClick={() => handlePages("+")} disabled={pages.end >= count}>
-          <p>Next Page</p>
+        <Button
+          size="sm"
+          className="community-card_btn"
+          onClick={() => handleSearch({ setLoader: true })}
+        >
+          Search
         </Button>
       </div>
     </>

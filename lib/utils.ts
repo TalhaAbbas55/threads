@@ -41,3 +41,25 @@ export function formatThreadCount(count: number): string {
     return `${threadCount} ${threadWord}`;
   }
 }
+
+export function capitalizeFirstLetterOfWords(inputString: string) {
+  return inputString.replace(/\b\w/g, (char: string) => char.toUpperCase());
+}
+
+const randomColors = [
+  "#FF5733", // Red
+  "#FFA500", // Orange
+  "#FFFF00", // Yellow
+  "#7FFF00", // Chartreuse
+  "#00FF00", // Lime
+  "#00FF7F", // Spring Green
+  "#00CED1", // Dark Turquoise
+  "#4169E1", // Royal Blue
+  "#800080", // Purple
+  "#FF1493", // Deep Pink
+];
+
+export function getRandomColor() {
+  const randomIndex = Math.floor(Math.random() * randomColors.length);
+  return randomColors[randomIndex];
+}

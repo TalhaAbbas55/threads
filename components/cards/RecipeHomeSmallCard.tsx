@@ -5,66 +5,17 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { useDispatch } from "react-redux";
 
-const RecipeHomeSmallCard: React.FC = ({
-  uri,
-  label,
-  image,
-  source,
-  url,
-  shareAs,
-  dietLabels,
-  healthLabels,
-  cautions,
-  ingredientLines,
-  ingredients,
-  calories,
-  totalWeight,
-  totalTime,
-  cuisineType,
-  mealType,
-  dishType,
-  totalNutrients,
-  totalDaily,
-  digest,
-}: SingleRecipe) => {
-  const dispatch = useDispatch();
-  const urlObject = new URL(url || "");
+const RecipeHomeSmallCard: React.FC = ({ dish }: SingleRecipe) => {
   const router = useRouter();
   const navigateRoute = () => {
-    dispatch(
-      setRecipeData({
-        uri,
-        label,
-        image,
-        source,
-        url,
-        shareAs,
-        dietLabels,
-        healthLabels,
-        cautions,
-        ingredientLines,
-        ingredients,
-        calories,
-        totalWeight,
-        totalTime,
-        cuisineType,
-        mealType,
-        dishType,
-        totalNutrients,
-        totalDaily,
-        digest,
-        sourceWebsiteUrl: `${urlObject.protocol}${urlObject.hostname}`,
-      })
-    );
-    router.push(`/search/SingleRecipe/${label}`);
+    router.push(`/search/SingleRecipe/${dish.id}`);
   };
   return (
     <Image
       onClick={navigateRoute}
-      src={image}
-      alt={label}
+      src={dish.image}
+      alt={dish.title}
       width={130}
       height={130}
       className={cn(

@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
-
-import Searchbar from "@/components/shared/Searchbar";
-
 import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
 import RecipeSearch from "@/components/shared/RecipeSearch";
 import { useEffect } from "react";
-import { getApiWithoutAuth } from "@/lib/actions/recipes.action";
+import { getRequestRecipe } from "@/lib/actions/recipes.action";
 import RecipeCard from "@/components/cards/RecipeCard";
 import { Recipe } from "@/lib/interfaces";
-import { Button } from "@/components/ui/button";
+
 import BackToTop from "@/components/shared/BackToTop";
+
+import { apiUrls } from "@/lib/apiUrls";
+import RecipeContainer from "@/components/cards/RecipeContainer";
 interface SearchParams {
   [key: string]: string | undefined;
 }
@@ -24,59 +24,31 @@ async function Page({ searchParams }: { searchParams: SearchParams }) {
   let response;
 
   const Ingredients: string = decodeURIComponent(searchParams.q || "");
+  console.log(Ingredients, "Ingredients");
 
   if (Ingredients?.length > 0) {
-    response = await getApiWithoutAuth(
-      `?q=${Ingredients}`,
-      parseInt(searchParams?.start || ""),
-      parseInt(searchParams.end || "")
+    response = await getRequestRecipe(
+      `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}${apiUrls.GET_BY_INGREDIENTS}${Ingredients}&limitLicense=true&number=2&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
     );
   }
 
   return (
     <section>
-      <h1 className="head-text mb-10">Search by Ingredients</h1>
-
       <RecipeSearch
         routeType="search/IngredientsBased"
         placeholder="Search Ingredients"
-        count={response?.data.count}
+        count={response?.data?.length}
       />
 
       <div className="mt-14 flex flex-col gap-9">
-        <p className="head-text">
-          Dishes List ({searchParams.start} ---- {searchParams.end} )
-        </p>
-        {response?.data.hits.map((dish: Recipe, index: number) => (
-          <RecipeCard
-            userId={user.id}
-            isFavorite={userInfo?.favorites.includes(dish.recipe.uri) || false}
-            key={index}
-            uri={dish.recipe.uri}
-            label={dish.recipe.label}
-            image={dish.recipe.image}
-            source={dish.recipe.source}
-            url={dish.recipe.url}
-            shareAs={dish.recipe.shareAs}
-            dietLabels={dish.recipe.dietLabels}
-            healthLabels={dish.recipe.healthLabels}
-            cautions={dish.recipe.cautions}
-            ingredientLines={dish.recipe.ingredientLines}
-            ingredients={dish.recipe.ingredients}
-            calories={dish.recipe.calories}
-            totalWeight={dish.recipe.totalWeight}
-            totalTime={dish.recipe.totalTime}
-            cuisineType={dish.recipe.cuisineType}
-            mealType={dish.recipe.mealType}
-            dishType={dish.recipe.dishType}
-            totalNutrients={dish.recipe.totalNutrients}
-            totalDaily={dish.recipe.totalDaily}
-            digest={dish.recipe.digest}
-          />
-        ))}
+        <RecipeContainer
+          dishesData={response?.data || []}
+          nameMode={false}
+          user={user.id}
+        />
       </div>
 
-      <BackToTop />
+      {response?.data?.count > 0 && <BackToTop />}
     </section>
   );
 }

@@ -1,18 +1,24 @@
-import axios from 'axios';
+import axios from "axios";
 
+import Recipe from "../models/recipe.model";
+import { connectToDatabase } from "./mongoose";
+import { apiUrls } from "../apiUrls";
 
-
-
-export const getApiWithoutAuth = async (url:string,start:number=1,end:number=99) => {
+export const getApiWithoutAuth = async (
+  url: string,
+  start: number = 1,
+  end: number = 99
+) => {
   try {
-    
-    const response = await axios.get(`${process.env.NEXT_EMAMAM_URL}${url}&&app_id=${process.env.NEXT_EDAMAM_APP_ID}&app_key=${process.env.NEXT_EDAMAM_APP_KEY}&from=${start}&to=${end}`);
-    
+    const response = await axios.get(
+      ` ${process.env.NEXT_EMAMAM_URL}${url}&&app_id=${process.env.NEXT_EDAMAM_APP_ID}&app_key=${process.env.NEXT_EDAMAM_APP_KEY}&from=${start}&to=${end}&limitLicense=true`
+    );
+
     return {
       data: response.data,
       success: true,
     };
-  } catch (error:any) {
+  } catch (error: any) {
     return {
       success: false,
       message: error?.response?.data || error?.error,
@@ -20,17 +26,15 @@ export const getApiWithoutAuth = async (url:string,start:number=1,end:number=99)
   }
 };
 
-
-
-export const getRecipeInfoByUri = async (uri: string) => {
-  console.log(`${process.env.NEXT_EDAMAM_URI}&${uri}&app_id=${process.env.NEXT_EDAMAM_APP_ID}&app_key=${process.env.NEXT_EDAMAM_APP_KEY}`)
+export const getRequestRecipe = async (url: string) => {
+  console.log(url, "here");
   try {
-    const response = await axios.get(`${process.env.NEXT_EDAMAM_URI}&${uri}&app_id=${process.env.NEXT_EDAMAM_APP_ID}&app_key=${process.env.NEXT_EDAMAM_APP_KEY}`);
+    const response = await axios.get(url);
     return {
       data: response.data,
       success: true,
     };
-  } catch (error:any) {
+  } catch (error: any) {
     return {
       success: false,
       message: error?.response?.data || error?.message,
@@ -38,6 +42,37 @@ export const getRecipeInfoByUri = async (uri: string) => {
   }
 };
 
+// export async function rateRecipe(uri: string, rating: number) {
+//   // connectToDatabase();
+//   try {
+//     // Find the recipe document based on the URI
+//     // let recipe = await Recipe.findOne({ uri });
 
-// https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=http://www.edamam.com/ontologies/edamam.owl#recipe_c9ed14d96afe9571ed5fbba8b7c883a1&app_id=1c3ae643&app_key=56aef08b5b71f1405ae9cb98866e074a
-// https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_c9ed14d96afe9571ed5fbba8b7c883a1&app_id=1c3ae643&app_key=56aef08b5b71f1405ae9cb98866e074a
+//     // // If the recipe document does not exist, create a new one
+//     // if (!recipe) {
+//     //   // Create a new recipe document with the provided URI and rating
+//     //   recipe = new Recipe({ uri, rating });
+//     // } else {
+//     //   // Validate the rating (ensure it's between 1 and 5, for example)
+//     //   if (rating < 1 || rating > 5) {
+//     //     throw new Error("Rating must be between 1 and 5");
+//     //   }
+
+//     //   // Update the rating field of the existing recipe
+//     //   recipe.rating = rating;
+//     // }
+
+//     // Save the recipe document (whether it's a new record or an existing one)
+//     console.log("rating recipe", uri, rating);
+//     const recipe = new Recipe({ uri, rating });
+
+//     console.log(recipe);
+//     await recipe.save();
+
+//     // Return the updated or newly created recipe document
+//     return recipe;
+//   } catch (error) {
+//     console.error("Error rating recipe:", error);
+//     throw new Error("Unable to rate recipe");
+//   }
+// }
