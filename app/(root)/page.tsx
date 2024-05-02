@@ -5,11 +5,7 @@ import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
-import {
-  getApiWithoutAuth,
-  getRequestRecipe,
-} from "@/lib/actions/recipes.action";
-import { allIngredients } from "@/constants";
+import { getRequestRecipe } from "@/lib/actions/recipes.action";
 
 import { currentUser } from "@clerk/nextjs";
 import RecipeHomeCard from "@/components/cards/RecipeHomeCard";

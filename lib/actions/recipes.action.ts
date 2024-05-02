@@ -1,30 +1,6 @@
 import axios from "axios";
 
 import Recipe from "../models/recipe.model";
-import { connectToDatabase } from "./mongoose";
-import { apiUrls } from "../apiUrls";
-
-export const getApiWithoutAuth = async (
-  url: string,
-  start: number = 1,
-  end: number = 99
-) => {
-  try {
-    const response = await axios.get(
-      ` ${process.env.NEXT_EMAMAM_URL}${url}&&app_id=${process.env.NEXT_EDAMAM_APP_ID}&app_key=${process.env.NEXT_EDAMAM_APP_KEY}&from=${start}&to=${end}&limitLicense=true`
-    );
-
-    return {
-      data: response.data,
-      success: true,
-    };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error?.response?.data || error?.error,
-    };
-  }
-};
 
 export const getRequestRecipe = async (url: string) => {
   console.log(url, "here");
