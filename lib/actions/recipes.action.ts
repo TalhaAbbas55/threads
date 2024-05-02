@@ -1,6 +1,9 @@
+"use server";
 import axios from "axios";
 
-import Recipe from "../models/recipe.model";
+import { connectToDatabase } from "./mongoose";
+import Dish from "../models/recipe.model";
+import User from "../models/user.models";
 
 export const getRequestRecipe = async (url: string) => {
   console.log(url, "here");
@@ -18,37 +21,80 @@ export const getRequestRecipe = async (url: string) => {
   }
 };
 
-// export async function rateRecipe(uri: string, rating: number) {
-//   // connectToDatabase();
-//   try {
-//     // Find the recipe document based on the URI
-//     // let recipe = await Recipe.findOne({ uri });
+export async function createDishRecord(
+  userId: string,
+  rating: number,
+  dishId: string
+) {
+  connectToDatabase();
+  try {
+    // Create a new record in the Dish collection
+    const createdDish = await Dish.create({
+      userId,
+      rating,
+      id: dishId,
+    });
 
-//     // // If the recipe document does not exist, create a new one
-//     // if (!recipe) {
-//     //   // Create a new recipe document with the provided URI and rating
-//     //   recipe = new Recipe({ uri, rating });
-//     // } else {
-//     //   // Validate the rating (ensure it's between 1 and 5, for example)
-//     //   if (rating < 1 || rating > 5) {
-//     //     throw new Error("Rating must be between 1 and 5");
-//     //   }
+    console.log("Dish record created:", createdDish);
 
-//     //   // Update the rating field of the existing recipe
-//     //   recipe.rating = rating;
-//     // }
+    // Optionally, you can return the created dish record
+    return createdDish;
+  } catch (error) {
+    // Handle any errors that occur during creation
+    throw new Error(`Failed to create dish record: ${error.message}`);
+  }
+}
+export async function fetchDishRatings(dishId: string) {
+  connectToDatabase();
+  try {
+    // Find all ratings that match the provided dishId
+    const ratings = await Dish.find({ id: dishId });
 
-//     // Save the recipe document (whether it's a new record or an existing one)
-//     console.log("rating recipe", uri, rating);
-//     const recipe = new Recipe({ uri, rating });
+    console.log("Dish ratings:", ratings);
+    // Extract user IDs from the ratings
+    const userIds = ratings.map((rating) => rating.userId);
 
-//     console.log(recipe);
-//     await recipe.save();
+    console.log("User IDs:", userIds);
+    // Fetch user data for the extracted user IDs
+    const users = await User.find({ _id: { $in: userIds } }, "name image _id");
 
-//     // Return the updated or newly created recipe document
-//     return recipe;
-//   } catch (error) {
-//     console.error("Error rating recipe:", error);
-//     throw new Error("Unable to rate recipe");
-//   }
-// }
+    console.log("Users:", users);
+    // Replace userIds with user objects in the ratings
+    const populatedRatings = ratings.map((rating) => {
+      const user = users.find((user) => user._id.toString() === rating.userId);
+      return { ...rating.toObject(), userId: user }; // Replace userId with user object
+    });
+
+    console.log("Dish ratings:", populatedRatings);
+
+    // Optionally, you can return the fetched ratings
+    return populatedRatings;
+  } catch (error) {
+    // Handle any errors that occur during fetching
+    throw new Error(`Failed to fetch dish ratings: ${error.message}`);
+  }
+}
+
+export async function editDishRecord(
+  userId: string,
+  rating: number,
+  dishId: string
+) {
+  connectToDatabase();
+  try {
+    // Create a new record in the Dish collection
+    const createdDish = await Dish.create({
+      userId,
+      rating,
+      id: dishId,
+    });
+
+    console.log("Dish record created:", createdDish);
+
+    // Optionally, you can return the created dish record
+    return createdDish;
+  } catch (error) {
+    // Handle any errors that occur during creation
+    throw new Error(`Failed to create dish record: ${error.message}`);
+  }
+}

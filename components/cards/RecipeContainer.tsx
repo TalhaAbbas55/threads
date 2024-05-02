@@ -37,6 +37,7 @@ const RecipeContainer: React.FC<{
       Math.min(prevPage + 1, Math.ceil(dishesData.length / itemsPerPage))
     );
   };
+  console.log(currentDishesData, "currentDishesData");
 
   return (
     <>

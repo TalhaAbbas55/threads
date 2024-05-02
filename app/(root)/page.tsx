@@ -12,6 +12,7 @@ import RecipeHomeCard from "@/components/cards/RecipeHomeCard";
 import { cn } from "@/lib/utils";
 import RecipeHomeSmallCard from "@/components/cards/RecipeHomeSmallCard";
 import Footer from "@/components/cards/Footer";
+import { fetchUser } from "@/lib/actions/user.actions";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -19,6 +20,8 @@ export const metadata: Metadata = {
 };
 
 export default async function MusicPage() {
+  const userData = await currentUser();
+  const userInfo = await fetchUser(userData.id);
   const response = await getRequestRecipe(
     `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
   );
@@ -31,7 +34,7 @@ export default async function MusicPage() {
   const responseFour = await getRequestRecipe(
     `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
   );
-  console.log(response, responseThree, responseFour);
+
   return (
     <>
       <h4
@@ -45,7 +48,7 @@ export default async function MusicPage() {
           {response?.data?.recipes?.map((dish: any, index: number) => (
             <div className="my-10">
               <RecipeHomeCard
-                // userId={userData.id}
+                userId={userInfo?._id}
                 // isFavorite={
                 //   userInfo?.favorites.includes(dish.recipe.uri) || false
                 // }
@@ -68,7 +71,11 @@ export default async function MusicPage() {
       <ScrollArea>
         <div className="flex space-x-4 pb-4">
           {responseTwo?.data?.recipes.map((dish: any, index: number) => (
-            <RecipeHomeSmallCard key={index} dish={dish} />
+            <RecipeHomeSmallCard
+              key={index}
+              dish={dish}
+              userId={userInfo?._id}
+            />
           ))}
         </div>
         <ScrollBar orientation="horizontal" />
@@ -85,7 +92,7 @@ export default async function MusicPage() {
           {responseThree?.data?.recipes?.map((dish: any, index: number) => (
             <div className="my-10">
               <RecipeHomeCard
-                // userId={userData.id}
+                userId={userInfo?._id}
                 // isFavorite={
                 //   userInfo?.favorites.includes(dish.recipe.uri) || false
                 // }
@@ -107,7 +114,11 @@ export default async function MusicPage() {
       <ScrollArea>
         <div className="flex space-x-4 pb-4">
           {responseFour?.data?.recipes.map((dish: any, index: number) => (
-            <RecipeHomeSmallCard key={index} dish={dish} />
+            <RecipeHomeSmallCard
+              key={index}
+              dish={dish}
+              userId={userInfo?._id}
+            />
           ))}
         </div>
         <ScrollBar orientation="horizontal" />

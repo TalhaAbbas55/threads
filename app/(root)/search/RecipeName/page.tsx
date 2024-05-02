@@ -42,7 +42,7 @@ async function Page({ searchParams }: { searchParams: SearchParams }) {
         <RecipeContainer
           dishesData={response?.data.results || []}
           nameMode
-          user={user.id}
+          user={userInfo._id}
         />
       </div>
 

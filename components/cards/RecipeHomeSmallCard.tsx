@@ -6,10 +6,10 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const RecipeHomeSmallCard: React.FC = ({ dish }: SingleRecipe) => {
+const RecipeHomeSmallCard: React.FC = ({ dish, userId }: SingleRecipe) => {
   const router = useRouter();
   const navigateRoute = () => {
-    router.push(`/search/SingleRecipe/${dish.id}`);
+    router.push(`/search/SingleRecipe/${dish.id}?current=${userId}`);
   };
   return (
     <Image

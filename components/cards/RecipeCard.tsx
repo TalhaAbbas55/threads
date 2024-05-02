@@ -27,7 +27,7 @@ SingleRecipe) {
   const [favorite, setfavorite] = useState(isFavorite);
 
   const navigateRoute = () => {
-    router.push(`/search/SingleRecipe/${dish.id}`);
+    router.push(`/search/SingleRecipe/${dish.id}?current=${userId}`);
   };
   const handleAddToFavorites = async () => {
     console.log(userId, "userId");

@@ -17,12 +17,12 @@ import {
 import { toggleFromFavorites } from "@/lib/actions/user.actions";
 import { useState } from "react";
 
-function RecipeHomeCard({ dish }: SingleRecipe) {
+function RecipeHomeCard({ dish, userId }: SingleRecipe) {
   console.log(dish);
   const router = useRouter();
 
   const navigateRoute = () => {
-    router.push(`/search/SingleRecipe/${dish.id}`);
+    router.push(`/search/SingleRecipe/${dish.id}?current=${userId}`);
   };
 
   return (
