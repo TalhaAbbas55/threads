@@ -31,7 +31,7 @@ function RecipeHomeCard({ dish }: SingleRecipe) {
       style={{ minWidth: "300px" }}
       onClick={navigateRoute}
     >
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 justify-center">
         <div className="flex w-full justify-between items-center">
           <div>
             <Image
