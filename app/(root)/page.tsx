@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import RecipeHomeSmallCard from "@/components/cards/RecipeHomeSmallCard";
 import Footer from "@/components/cards/Footer";
 import { fetchUser } from "@/lib/actions/user.actions";
-
+import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "Home",
   description: "List of common recipes.",
@@ -21,20 +21,16 @@ export const metadata: Metadata = {
 
 export default async function MusicPage() {
   const userData = await currentUser();
+  if (!userData) redirect("/login");
   const userInfo = await fetchUser(userData.id);
   const response = await getRequestRecipe(
-    `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
+    `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=2&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
   );
-  const responseTwo = await getRequestRecipe(
-    `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
-  );
-  const responseThree = await getRequestRecipe(
-    `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
-  );
-  const responseFour = await getRequestRecipe(
-    `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
-  );
+  // const responseTwo = await getRequestRecipe(
+  //   `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/random?limitLicense=true&number=10&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
+  // );
 
+  console.log(userInfo, "response", userData);
   return (
     <>
       <h4
@@ -48,10 +44,8 @@ export default async function MusicPage() {
           {response?.data?.recipes?.map((dish: any, index: number) => (
             <div className="my-10">
               <RecipeHomeCard
-                userId={userInfo?._id}
-                // isFavorite={
-                //   userInfo?.favorites.includes(dish.recipe.uri) || false
-                // }
+                userId={userInfo?._id || ""}
+                isFavorite={userInfo?.favorites?.includes(dish?.id) || false}
                 key={index}
                 dish={dish}
               />
@@ -68,20 +62,20 @@ export default async function MusicPage() {
         Chef's Specials
       </h4>
 
-      <ScrollArea>
+      {/* <ScrollArea>
         <div className="flex space-x-4 pb-4">
           {responseTwo?.data?.recipes.map((dish: any, index: number) => (
             <RecipeHomeSmallCard
               key={index}
               dish={dish}
-              userId={userInfo?._id}
+              userId={userInfo?._id || ""}
             />
           ))}
         </div>
         <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </ScrollArea> */}
       <Separator className="my-4" />
-      <h4
+      {/* <h4
         className="text-base-semibold text-light-1 mx"
         style={{ fontSize: "30px" }}
       >
@@ -92,7 +86,7 @@ export default async function MusicPage() {
           {responseThree?.data?.recipes?.map((dish: any, index: number) => (
             <div className="my-10">
               <RecipeHomeCard
-                userId={userInfo?._id}
+                userId={userInfo?._id || ""}
                 // isFavorite={
                 //   userInfo?.favorites.includes(dish.recipe.uri) || false
                 // }
@@ -117,12 +111,12 @@ export default async function MusicPage() {
             <RecipeHomeSmallCard
               key={index}
               dish={dish}
-              userId={userInfo?._id}
+              userId={userInfo?._id || ""}
             />
           ))}
         </div>
         <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </ScrollArea> */}
       <Footer />
     </>
   );

@@ -200,8 +200,7 @@ export async function toggleFromFavorites(userId: string, uri: number) {
   connectToDatabase();
   try {
     // Find the user document based on the user ID
-    let user = await User.findOne({ id: userId });
-    console.log(user, "ue", userId);
+    let user = await User.findOne({ _id: userId });
 
     if (!user) {
       throw new Error("User not found");
@@ -211,10 +210,10 @@ export async function toggleFromFavorites(userId: string, uri: number) {
     const operation = user.favorites.includes(uri) ? "$pull" : "$push";
 
     // Update the favorites array using $pull or $push
-    await User.updateOne({ id: userId }, { [operation]: { favorites: uri } });
+    await User.updateOne({ _id: userId }, { [operation]: { favorites: uri } });
 
     // Fetch the updated user document
-    user = await User.findOne({ id: userId }); // Convert to plain JavaScript object
+    user = await User.findOne({ _id: userId }); // Convert to plain JavaScript object
 
     // Return the updated user document
     return user;

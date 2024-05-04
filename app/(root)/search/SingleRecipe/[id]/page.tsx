@@ -30,48 +30,42 @@ function SingleRecipeDetail({ searchParams }) {
   const recipeData: SingleRecipe = useSelector(
     (state: RootState) => state.data.recipeData
   );
-  console.log(searchParams, "searchParams");
 
   const [allRecipeData, setAllRecipeData] = useState({});
   const params = useParams();
-
-  console.log(params.id, "pea");
-
-  const [favorite, setfavorite] = useState(params?.isFavorite);
+  console.log(searchParams?.isFavorite, searchParams);
+  const [favorite, setfavorite] = useState(
+    searchParams?.isFavorite === "false" ? false : true
+  );
   const handleAddToFavorites = async () => {
-    const response =
-      userId &&
-      (await toggleFromFavorites(searchParams.current, allRecipeData.id || ""));
+    const response = await toggleFromFavorites(
+      searchParams.current,
+      allRecipeData.id || ""
+    );
+    console.log(response);
     setfavorite(!favorite);
   };
-  const handleIframeLoad = () => {
-    // If the iframe has loaded successfully, do nothing
-    console.log("success");
-  };
 
-  const handleIframeError = () => {
-    // If the iframe failed to load, set the state to indicate refusal
-    console.log("error");
-  };
-
+  console.log(favorite, "favo");
   const [currentRating, setCurrentRating] = useState({});
+
   const handleRating = async (rating) => {
     let data;
     if (currentRating?._id) {
-      data = await createDishRecord(searchParams.current, rating, params.id);
-    } else {
       data = await editDishRecord(searchParams.current, rating, params.id);
+    } else {
+      data = await createDishRecord(searchParams.current, rating, params.id);
+      setDisableRating(true);
     }
 
-    console.log(data, "data");
     setCurrentRating(data);
   };
   const [loading, setLoading] = useState(true);
-  console.log("key ehre", currentRating);
+
   const getRecipesData = async () => {
     const url = `${process.env.NEXT_PUBLIC_SPOONACULAR_URL}/recipes/${params.id}/information?includeNutrition=true&apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`;
     const response = await getRequestRecipe(url);
-    console.log(response, "re");
+
     setAllRecipeData(response.data);
     setLoading(false);
   };
@@ -79,7 +73,7 @@ function SingleRecipeDetail({ searchParams }) {
   const [disableRating, setDisableRating] = useState(false);
   const getAllRatings = async () => {
     const allRecipRatings = await fetchDishRatings(params.id);
-    console.log(allRecipRatings, "ratin");
+
     allRecipRatings.forEach((rating) => {
       if (
         rating.userId._id === searchParams.current &&
@@ -96,7 +90,9 @@ function SingleRecipeDetail({ searchParams }) {
     getRecipesData();
     getAllRatings();
   }, []);
-  console.log(allRecipeData, "allRecipeData", loading);
+  console.log(favorite ? "yellow" : "#fff");
+  console.log(favorite, "favori");
+
   return (
     <article className="community-card w-full">
       {loading ? (
@@ -303,7 +299,6 @@ function SingleRecipeDetail({ searchParams }) {
                             </h3>
                             <div className="grid-container">
                               {step.ingredients?.map((ingredient, index) => {
-                                console.log(ingredient, "ingredient");
                                 return (
                                   <div
                                     className="grid-item flex "
@@ -352,7 +347,6 @@ function SingleRecipeDetail({ searchParams }) {
                             </h3>
                             <div className="grid-container">
                               {step.equipment?.map((equipment, index) => {
-                                console.log(equipment, "equipment");
                                 return (
                                   <div
                                     className="grid-item flex "
@@ -413,6 +407,21 @@ function SingleRecipeDetail({ searchParams }) {
               <Separator className="my-4" />
             </>
           )}
+          {disableRating && (
+            <>
+              <h1 className="text-light-1 mt-5 " style={{ fontSize: "20px" }}>
+                Your Review
+              </h1>
+              <Rating
+                style={{ maxWidth: 180 }}
+                value={currentRating?.rating || 0}
+                onChange={handleRating}
+                className="mt-2 mb-5"
+              />
+
+              <Separator className="my-4" />
+            </>
+          )}
 
           {allRatingData.length > 0 && (
             <h1 className="text-light-1 head-text mt-5 mb-5">
@@ -421,38 +430,42 @@ function SingleRecipeDetail({ searchParams }) {
           )}
 
           {allRatingData.length > 0 ? (
-            allRatingData.map((rating, index) => (
-              <div
-                className="flex justify-between w-full"
-                key={index}
-                style={{ alignItems: "center" }}
-              >
-                <div className="flex gap-5">
-                  <Image
-                    src={rating?.userId?.image}
-                    alt="community_logo"
-                    className=" object-cover mx-auto mb-4"
-                    height={100}
-                    width={100}
-                    style={{
-                      maxHeight: "120px",
-                      maxWidth: "120px",
-                    }}
-                  />
-                  <h2
-                    className="text-light-1 my-5"
-                    style={{ fontSize: "30px" }}
+            allRatingData.map(
+              (rating, index) =>
+                rating.userId._id !== searchParams.current &&
+                rating.id !== params.id && (
+                  <div
+                    className="flex justify-between w-full"
+                    key={index}
+                    style={{ alignItems: "center" }}
                   >
-                    {rating?.userId?.name}
-                  </h2>
-                </div>
-                <Rating
-                  value={rating?.rating}
-                  readOnly
-                  style={{ maxWidth: 180 }}
-                />
-              </div>
-            ))
+                    <div className="flex gap-5">
+                      <Image
+                        src={rating?.userId?.image}
+                        alt="community_logo"
+                        className=" object-cover mx-auto mb-4"
+                        height={100}
+                        width={100}
+                        style={{
+                          maxHeight: "120px",
+                          maxWidth: "120px",
+                        }}
+                      />
+                      <h2
+                        className="text-light-1 my-5"
+                        style={{ fontSize: "30px" }}
+                      >
+                        {rating?.userId?.name}
+                      </h2>
+                    </div>
+                    <Rating
+                      value={rating?.rating}
+                      readOnly
+                      style={{ maxWidth: 180 }}
+                    />
+                  </div>
+                )
+            )
           ) : (
             <div className="flex  w-full" style={{ alignItems: "center" }}>
               <h1 className="text-light-1 head-text mt-5 mb-5">
@@ -462,6 +475,16 @@ function SingleRecipeDetail({ searchParams }) {
           )}
         </>
       )}
+      {allRatingData.length === 1 &&
+        allRatingData[0].userId._id === searchParams.current &&
+        allRatingData[0].id === params.id && (
+          <h1
+            className="text-light-1 head-text mt-5 mb-5"
+            style={{ fontSize: "16px" }}
+          >
+            No Ratings Yet
+          </h1>
+        )}
     </article>
   );
 }

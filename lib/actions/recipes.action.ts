@@ -82,19 +82,24 @@ export async function editDishRecord(
 ) {
   connectToDatabase();
   try {
-    // Create a new record in the Dish collection
-    const createdDish = await Dish.create({
-      userId,
-      rating,
-      id: dishId,
-    });
+    console.log("Dish ID:", dishId);
+    // Find the dish record in the Dish collection based on the dishId
+    const dish = await Dish.findOneAndUpdate(
+      { id: dishId, userId },
+      { rating: rating },
+      { new: true }
+    );
 
-    console.log("Dish record created:", createdDish);
+    if (!dish) {
+      throw new Error("Dish not found");
+    }
 
-    // Optionally, you can return the created dish record
-    return createdDish;
+    console.log("Dish record updated:", dish);
+
+    // Optionally, you can return the updated dish record
+    return dish;
   } catch (error) {
-    // Handle any errors that occur during creation
-    throw new Error(`Failed to create dish record: ${error.message}`);
+    // Handle any errors that occur during the update
+    throw new Error(`Failed to update dish record: ${error.message}`);
   }
 }

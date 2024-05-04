@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
+import { redirect } from "next/navigation";
 import { Button } from "../ui/button";
 import { Recipe, SingleRecipe } from "@/lib/interfaces";
 import AddtoFavorites from "@/public/assets/favorites-star-svgrepo-com";
@@ -15,14 +15,22 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toggleFromFavorites } from "@/lib/actions/user.actions";
-import { useState } from "react";
+import { useId, useState } from "react";
 
-function RecipeHomeCard({ dish, userId }: SingleRecipe) {
+function RecipeHomeCard({ dish, userId, isFavorite }: SingleRecipe) {
   console.log(dish);
   const router = useRouter();
 
   const navigateRoute = () => {
-    router.push(`/search/SingleRecipe/${dish.id}?current=${userId}`);
+    console.log(" ia mhere", useId);
+    if (!userId) {
+      console.log(" ia mhereddd", userId);
+      redirect("/sing-in");
+      return;
+    }
+    router.push(
+      `/search/SingleRecipe/${dish.id}?current=${userId}&isFavorite=${isFavorite}`
+    );
   };
 
   return (

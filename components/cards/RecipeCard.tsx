@@ -12,6 +12,7 @@ import { toggleFromFavorites } from "@/lib/actions/user.actions";
 import { useState } from "react";
 import "./styles.css";
 import { capitalizeFirstLetterOfWords } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 function RecipeCard({
   userId,
@@ -27,6 +28,7 @@ SingleRecipe) {
   const [favorite, setfavorite] = useState(isFavorite);
 
   const navigateRoute = () => {
+    if (!userId) redirect("/sing-in");
     router.push(`/search/SingleRecipe/${dish.id}?current=${userId}`);
   };
   const handleAddToFavorites = async () => {

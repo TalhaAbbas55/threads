@@ -5,10 +5,12 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { redirect } from "next/navigation";
 
 const RecipeHomeSmallCard: React.FC = ({ dish, userId }: SingleRecipe) => {
   const router = useRouter();
   const navigateRoute = () => {
+    if (!userId) redirect("/sing-in");
     router.push(`/search/SingleRecipe/${dish.id}?current=${userId}`);
   };
   return (
