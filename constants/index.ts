@@ -5,12 +5,12 @@ export const sidebarLinks = [
     label: "Home",
   },
   {
-    imgURL: "/assets/home.svg",
+    imgURL: "/assets/dish-svgrepo-com.svg",
     route: "/others",
     label: "Others",
   },
   {
-    imgURL: "/assets/community.svg",
+    imgURL: "/assets/couple-of-men-drinking-in-a-bar-svgrepo-com.svg",
     route: "/users",
     label: "Users",
   },
@@ -40,7 +40,7 @@ export const sidebarLinks = [
     label: "Search",
   },
   {
-    imgURL: "/assets/search.svg",
+    imgURL: "/assets/favorites-star-svgrepo-com.svg",
     route: "/favorites",
     label: "Favorites",
   },
