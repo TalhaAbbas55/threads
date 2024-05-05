@@ -27,10 +27,10 @@ const page = async ({ params }: { params: { id: string } }) => {
       />
 
       <div className="mt-9">
-        <Tabs defaultValue="threads" className="w-full">
+        <Tabs defaultValue="posts" className="w-full">
           <TabsList className="tab">
             {profileTabs.map((tab) => (
-              <TabsTrigger key={tab.label} value={tab.label} className="tab">
+              <TabsTrigger key={tab.label} value={tab.value} className="tab">
                 <Image
                   src={tab.icon}
                   alt={tab.label}
@@ -39,7 +39,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                   className="object-contain"
                 />
                 <p className="max-sm:hidden">{tab.label}</p>
-                {tab.label === "Threads" && (
+                {tab.label === "Posts" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
                     {userInfo?.threads?.length}
                   </p>
@@ -49,15 +49,19 @@ const page = async ({ params }: { params: { id: string } }) => {
           </TabsList>
           {profileTabs.map((tab) => (
             <TabsContent
-              key={`content-${tab.label}`}
+              key={`content-${tab.value}`}
               value={tab.value}
               className="w-full text-light-1"
             >
-              <ThreadsTab
-                currentUserId={userData.id}
-                accountId={userInfo.id}
-                accountType="User"
-              />
+              {/* Ensure that you render the appropriate component based on the tab value */}
+              {tab.value === "posts" && (
+                <ThreadsTab
+                  currentUserId={userData.id}
+                  accountId={userInfo.id}
+                  accountType="User"
+                />
+              )}
+              {/* Render other tab content components similarly based on 'tab.value' */}
             </TabsContent>
           ))}
         </Tabs>
